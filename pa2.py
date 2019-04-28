@@ -13,10 +13,6 @@ def main():
     text_file = dfa.makeTextFile()
     
     dfa_input = readFile("testcasesUnix/dfa6Input.txt")
-    #dfa.printRenamedDict()
-    #print(" ")
-    #dfa.printDfa()
-    #print(" ")
     dfa.simulateDFA(text_file, dfa_input)
 
 def readFile(filename):

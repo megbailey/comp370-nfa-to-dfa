@@ -38,23 +38,15 @@ class DFA:
             self.addtoStateList(starting_state)
             self.addtoStateList(ending_state)
      
-        pp = pprint.PrettyPrinter(indent=4)
-        #pp.pprint(self.dfa_transition_dict)
         self.makeSingleStatesAList()
         self.createEmptyTransitions() 
-        #pp = pprint.PrettyPrinter(indent=4)
         self.epsilonEnclosure()
-        #pp.pprint(self.dfa_transition_dict)
-        #print(self.org_states)
 
         for key, value in self.dfa_transition_dict.items():   
             if len(value) > 1: #is multi-state
                 self.getMultiStates(value)
 
-        #pp.pprint(self.dfa_transition_dict)
-        #print(self.org_states)
         self.makeDeadTransitions()
-        #pp.pprint(self.dfa_transition_dict)
         self.rename()
         self.getAcceptStates(nfa)
         self.num_transitions = len(self.renamed_dfa_transition_dict.keys())
@@ -153,12 +145,11 @@ class DFA:
             queue = []
 
             if e_symbol is 'e': #we have an epsilon state
-                #print(e_key) 
                 #starting our stack
                 for state in e_ending_state:
                     queue.append(state)
                     all_e_enclosure.append(state)
-                #print(e_ending_state)
+
                 while len(queue) is not 0:
                     e_state = queue.pop()
                     if (e_state, 'e') in self.dfa_transition_dict: #and e_state not in all_e_enclosure:
@@ -173,24 +164,19 @@ class DFA:
                             for qb in self.dfa_transition_dict[(str([state]), symbol)]:
                                 if qb not in e_final:
                                     e_final.append(qb)
-                    #print(str([e_starting_state])+ " " + symbol + " " + str(e_final))
+
                     key = (str([e_starting_state]) , symbol)
                     self.addToDFADictionary(key, e_final)
                     self.addtoStateList(self.dfa_transition_dict[key])
 
                 self.addtoStateList(e_final)
                 self.addtoStateList(all_e_enclosure)
-        #pp = pprint.PrettyPrinter(indent=4)
-        #pp.pprint(self.dfa_transition_dict)
 
         #now we've taken care of all the epsilon junk - delete the epsilon transition from dict
         for e_key, e_value in self.dfa_transition_dict.items():
             e_symbol = e_key[1]
             if e_symbol is 'e': #we have an epsilon state       
                 del self.dfa_transition_dict[e_key]
-
-
-
 
     def getAcceptStates(self, nfa):
         for key, value in self.dfa_transition_dict.items():
@@ -199,9 +185,6 @@ class DFA:
                     self.accept_states.append(value)
         for accept_state in self.accept_states:
             self.renamed_accept_states.append(self.rename_dict[str(accept_state)])
-
-
-
 
     #renaming inital multi-states
     def rename(self):
@@ -284,7 +267,6 @@ class DFA:
         count = 2
         
         for transition in text_file:
-            #print(transition)
             if "\'" in transition:
                 transition_ar = transition.replace('\'', '').split()    
                 transition = transition_ar[0] + '-' + transition_ar[1]
@@ -299,32 +281,14 @@ class DFA:
         count = 0
         for line in dfa_input:
             if count is not line_count-1: #not the last line. we know this will be empty
-                #state = start_state
                 qa = start_state
                 for c in line:
                     if c in alphabet:
-                        #transition = state + '-' + c
                         transition = qa + '-' + c
-                        #state = dictionary[transition]
                         qb = dictionary[transition]
-
-                        for key, value in self.rename_dict.items():
-                            #print(str(value) + " " + str(state))
-                            if str(value) is str(qb):
-                                qb_translated = key
-                            if str(value) is str(qa):
-                                qa_translated = key
-
-                        #print(str(qa_translated) + "(" + str(qa) + ") \'" + c + "\'  => " + str(qb_translated) + "(" + str(qb) + ")")
-                        #print("Dictionary: " + str(qa_translated) + " '" + c + "' => " + str(self.dfa_transition_dict[(qb_translated, c)]))
-                        #print(transition + " => " + str(qb))
                         qa = qb
                 count += 1
                 if qa in accept_states_ar:
                     print("Accept")
                 else:
                     print("Reject")  
-
-
-
-
